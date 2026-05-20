@@ -1,0 +1,26 @@
+# Data Science & Machine Learning Core
+numpy
+pandas
+scikit-learn
+matplotlib
+seaborn
+
+# Deep Learning (Tasks 2 & 3)
+tensorflow
+keras
+
+# Audio Processing (Task 2)
+librosa
+soundfile
+av
+
+# Image Processing (Task 3)
+pillow
+
+# Model Serialization
+joblib
+
+# Backend API Servers (All Tasks)
+fastapi
+uvicorn
+pydantic

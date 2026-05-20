@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Scribe — Handwritten Character Recognition</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Three.js Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Header -->
+        <header class="hero">
+            <div class="hero-badge">AI / ML PROJECT</div>
+            <h1 class="hero-title">
+                <span class="glow-text">Neural</span> Scribe
+            </h1>
+            <p class="hero-subtitle">Handwritten Character Recognition with Deep Learning</p>
+            <div class="hero-stats">
+                <div class="stat-pill">
+                    <span class="stat-value" id="stat-dataset">MNIST</span>
+                    <span class="stat-label">Dataset</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-value" id="stat-classes">10</span>
+                    <span class="stat-label">Classes</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-value" id="stat-samples">70,000</span>
+                    <span class="stat-label">Samples</span>
+                </div>
+                <div class="stat-pill">
+                    <span class="stat-value" id="stat-best-acc">—</span>
+                    <span class="stat-label">Best Accuracy</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Section: Drawing Canvas -->
+        <section class="card" id="section-draw">
+            <h2 class="section-title"><span class="icon">✏️</span> Draw a Digit</h2>
+            <p class="section-desc">Draw on the canvas below — experience the neural network interface</p>
+            <div class="canvas-container">
+                <canvas id="draw-canvas" width="280" height="280"></canvas>
+                <div class="canvas-controls">
+                    <button id="btn-clear" class="btn btn-outline">Clear</button>
+                    <button id="btn-predict" class="btn btn-primary">Analyze</button>
+                </div>
+                <div class="canvas-result" id="canvas-result">
+                    <div class="result-digit" id="result-digit">?</div>
+                    <div class="result-label">Predicted Character</div>
+                    <div class="result-confidence" id="result-confidence">Draw a digit to begin</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Model Comparison -->
+        <section class="card" id="section-models">
+            <h2 class="section-title"><span class="icon">🧠</span> Model Performance</h2>
+            <p class="section-desc">Comparing SimpleCNN and DeepCNN architectures</p>
+            <div class="models-grid">
+                <div class="model-card" id="model-simple">
+                    <h3 class="model-name">SimpleCNN</h3>
+                    <div class="accuracy-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                            <circle class="ring-progress ring-simple" cx="60" cy="60" r="52"
+                                    stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+                        </svg>
+                        <div class="ring-value" id="simple-acc-value">0%</div>
+                    </div>
+                    <div class="model-stats">
+                        <div class="model-stat"><span class="label">Loss</span><span class="value" id="simple-loss">—</span></div>
+                        <div class="model-stat"><span class="label">Parameters</span><span class="value" id="simple-params">—</span></div>
+                        <div class="model-stat"><span class="label">Epochs</span><span class="value" id="simple-epochs">—</span></div>
+                    </div>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="model-card" id="model-deep">
+                    <h3 class="model-name">DeepCNN</h3>
+                    <div class="accuracy-ring">
+                        <svg viewBox="0 0 120 120">
+                            <circle class="ring-bg" cx="60" cy="60" r="52"/>
+                            <circle class="ring-progress ring-deep" cx="60" cy="60" r="52"
+                                    stroke-dasharray="326.73" stroke-dashoffset="326.73"/>
+                        </svg>
+                        <div class="ring-value" id="deep-acc-value">0%</div>
+                    </div>
+                    <div class="model-stats">
+                        <div class="model-stat"><span class="label">Loss</span><span class="value" id="deep-loss">—</span></div>
+                        <div class="model-stat"><span class="label">Parameters</span><span class="value" id="deep-params">—</span></div>
+                        <div class="model-stat"><span class="label">Epochs</span><span class="value" id="deep-epochs">—</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="winner-banner" id="winner-banner"></div>
+        </section>
+
+        <!-- Section: Training Curves -->
+        <section class="card" id="section-training">
+            <h2 class="section-title"><span class="icon">📈</span> Training Curves</h2>
+            <p class="section-desc">Accuracy and loss progression during training</p>
+            <div class="chart-tabs">
+                <button class="tab active" data-tab="accuracy">Accuracy</button>
+                <button class="tab" data-tab="loss">Loss</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="training-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- Section: Confusion Matrix -->
+        <section class="card" id="section-confusion">
+            <h2 class="section-title"><span class="icon">🔢</span> Confusion Matrix</h2>
+            <p class="section-desc">Hover over cells to see prediction details</p>
+            <div class="chart-tabs">
+                <button class="tab active" data-model="SimpleCNN">SimpleCNN</button>
+                <button class="tab" data-model="DeepCNN">DeepCNN</button>
+            </div>
+            <div class="confusion-container">
+                <div class="confusion-grid" id="confusion-grid"></div>
+                <div class="confusion-tooltip" id="confusion-tooltip"></div>
+            </div>
+        </section>
+
+        <!-- Section: Sample Predictions -->
+        <section class="card" id="section-predictions">
+            <h2 class="section-title"><span class="icon">🎯</span> Sample Predictions</h2>
+            <p class="section-desc">Green = correct, Red = incorrect prediction</p>
+            <div class="predictions-grid" id="predictions-grid"></div>
+        </section>
+
+        <!-- Section: Architecture -->
+        <section class="card" id="section-architecture">
+            <h2 class="section-title"><span class="icon">🏗️</span> Architecture Details</h2>
+            <div class="arch-grid">
+                <div class="arch-card">
+                    <h3>SimpleCNN</h3>
+                    <div class="arch-layers" id="arch-simple"></div>
+                </div>
+                <div class="arch-card">
+                    <h3>DeepCNN</h3>
+                    <div class="arch-layers" id="arch-deep"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Neural Scribe — Built with TensorFlow, Three.js &amp; 💙</p>
+            <p class="footer-sub">Handwritten Character Recognition • CNN Architecture Comparison</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

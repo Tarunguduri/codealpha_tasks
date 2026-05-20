@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credit Scoring Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Three.js 3D Background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🏦 ML PIPELINE</div>
+            <h1>Credit Scoring <span class="gold">Dashboard</span></h1>
+            <p class="hero-sub">Real-time model performance analytics · 4 Models · 5,000 Samples</p>
+        </div>
+    </header>
+
+    <!-- Live Inference Section -->
+    <section class="section" id="live-inference-section" style="margin-top: 4rem;">
+        <h2 class="section-title">Live <span class="emerald">Prediction</span></h2>
+        <p class="section-sub">Test the neural network in real-time. Enter financial details below.</p>
+        
+        <div class="glass-card" style="display: flex; gap: 2rem; padding: 2rem; flex-wrap: wrap;">
+            <div style="flex: 1; min-width: 300px;">
+                <form id="prediction-form" style="display: grid; gap: 1rem; grid-template-columns: 1fr 1fr;">
+                    <div><label>Age</label><input type="number" id="inp-age" value="35" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Income ($)</label><input type="number" id="inp-income" value="65000" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Total Debt ($)</label><input type="number" id="inp-debt" value="15000" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Loan Amount ($)</label><input type="number" id="inp-loan" value="20000" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Credit History (Yrs)</label><input type="number" id="inp-history" value="5" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Late Payments</label><input type="number" id="inp-late" value="0" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Credit Lines</label><input type="number" id="inp-lines" value="4" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    <div><label>Employment (Yrs)</label><input type="number" id="inp-employment" value="8" style="width:100%; padding: 0.5rem; border-radius: 4px; border: 1px solid #333; background: #1a1a2e; color: #fff;"></div>
+                    
+                    <button type="submit" style="grid-column: span 2; padding: 1rem; background: linear-gradient(135deg, #00d4ff, #00ff88); color: #000; font-weight: bold; border: none; border-radius: 8px; cursor: pointer; margin-top: 1rem; font-size: 1.1rem;">
+                        Run Live Prediction
+                    </button>
+                </form>
+            </div>
+            
+            <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 2rem; border: 1px solid rgba(255,255,255,0.1);">
+                <div style="font-size: 1.2rem; color: #8892b0; margin-bottom: 1rem;">Predicted Outcome</div>
+                <div id="live-outcome" style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 1rem; text-transform: uppercase;">---</div>
+                <div style="font-size: 1rem; color: #a8b2d1; display: flex; justify-content: space-between; width: 100%; max-width: 250px;">
+                    <span>Credit Score:</span> <strong id="live-score" class="emerald">---</strong>
+                </div>
+                <div style="font-size: 1rem; color: #a8b2d1; display: flex; justify-content: space-between; width: 100%; max-width: 250px; margin-top: 0.5rem;">
+                    <span>Default Prob:</span> <strong id="live-prob" class="gold">---</strong>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- KPI Strip -->
+    <section class="kpi-strip" id="kpi-strip">
+        <div class="kpi-card" data-delay="0">
+            <div class="kpi-icon">🏆</div>
+            <div class="kpi-value" id="kpi-best-model">—</div>
+            <div class="kpi-label">Best Model</div>
+        </div>
+        <div class="kpi-card" data-delay="100">
+            <div class="kpi-icon">📈</div>
+            <div class="kpi-value" id="kpi-best-auc">—</div>
+            <div class="kpi-label">Best ROC-AUC</div>
+        </div>
+        <div class="kpi-card" data-delay="200">
+            <div class="kpi-icon">🎯</div>
+            <div class="kpi-value" id="kpi-best-f1">—</div>
+            <div class="kpi-label">Best F1 Score</div>
+        </div>
+        <div class="kpi-card" data-delay="300">
+            <div class="kpi-icon">✅</div>
+            <div class="kpi-value" id="kpi-best-acc">—</div>
+            <div class="kpi-label">Best Accuracy</div>
+        </div>
+    </section>
+
+    <!-- Model Comparison Cards -->
+    <section class="section" id="models-section">
+        <h2 class="section-title">Model <span class="gold">Performance</span></h2>
+        <p class="section-sub">Comparing four classification models on credit default prediction</p>
+        <div class="model-grid" id="model-grid"></div>
+    </section>
+
+    <!-- ROC Curves -->
+    <section class="section" id="roc-section">
+        <h2 class="section-title">ROC <span class="emerald">Curves</span></h2>
+        <p class="section-sub">Receiver Operating Characteristic – higher area = better discrimination</p>
+        <div class="chart-container glass-card">
+            <canvas id="roc-canvas" width="800" height="500"></canvas>
+        </div>
+    </section>
+
+    <!-- Feature Importance -->
+    <section class="section" id="feature-section">
+        <h2 class="section-title">Feature <span class="gold">Importance</span></h2>
+        <p class="section-sub">Which features drive default prediction the most?</p>
+        <div class="feature-chart glass-card" id="feature-chart"></div>
+    </section>
+
+    <!-- Confusion Matrix -->
+    <section class="section" id="cm-section">
+        <h2 class="section-title">Confusion <span class="emerald">Matrices</span></h2>
+        <p class="section-sub">True vs predicted labels for each model</p>
+        <div class="cm-grid" id="cm-grid"></div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>Credit Scoring ML Pipeline &middot; Built with Python, scikit-learn & Three.js</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

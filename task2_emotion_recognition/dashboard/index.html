@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Emotion Recognition Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Three.js Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Main Container -->
+    <div class="dashboard-container">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo-icon">
+                        <span class="pulse-ring"></span>
+                        <span class="logo-emoji">🎙️</span>
+                    </div>
+                    <div>
+                        <h1>Emotion Recognition</h1>
+                        <p class="subtitle">Speech Analysis &amp; Classification Dashboard</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="status-badge" id="status-badge">
+                        <span class="status-dot"></span>
+                        <span id="data-mode">Loading...</span>
+                    </div>
+                    <div class="timestamp" id="timestamp"></div>
+                </div>
+            </div>
+            <!-- Audio Waveform Visualization -->
+            <div class="waveform-container">
+                <canvas id="waveform-canvas"></canvas>
+            </div>
+        </header>
+
+        <!-- Live Inference Section -->
+        <section class="section" id="live-audio-section" style="margin-top: 2rem;">
+            <div class="glass" style="padding: 2rem; border-radius: 12px; display: flex; flex-direction: column; align-items: center; text-align: center;">
+                <h2>Live Emotion Prediction</h2>
+                <p style="color: #a8b2d1; margin-bottom: 2rem;">Record your voice and let the Bi-LSTM model predict your emotion in real-time.</p>
+                
+                <div style="display: flex; gap: 1rem; align-items: center;">
+                    <button id="btn-record" style="padding: 1rem 2rem; background: linear-gradient(135deg, #ff007f, #7928ca); color: #fff; font-weight: bold; border: none; border-radius: 50px; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s;">
+                        Y" Start Recording
+                    </button>
+                    <button id="btn-stop" disabled style="padding: 1rem 2rem; background: #333; color: #888; font-weight: bold; border: none; border-radius: 50px; cursor: not-allowed; font-size: 1.1rem; display: flex; align-items: center; gap: 0.5rem; transition: transform 0.2s;">
+                        Y? Stop & Predict
+                    </button>
+                </div>
+                
+                <div id="recording-status" style="margin-top: 1rem; color: #ff007f; display: none; font-weight: bold;">
+                    <span class="pulse-ring" style="width: 10px; height: 10px; background: #ff007f; position: relative; margin-right: 8px;"></span> Recording...
+                </div>
+
+                <div style="margin-top: 2rem; background: rgba(0,0,0,0.4); padding: 1.5rem; border-radius: 8px; width: 100%; max-width: 400px;">
+                    <div style="font-size: 1rem; color: #8892b0; margin-bottom: 0.5rem;">Predicted Emotion</div>
+                    <div id="live-emotion" style="font-size: 2.5rem; font-weight: 800; color: #fff; text-transform: uppercase;">---</div>
+                    <div id="live-confidence" style="color: #00ff88; margin-top: 0.5rem; font-weight: 500;"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Overview Stats -->
+        <section class="stats-row" id="stats-row">
+            <div class="stat-card glass">
+                <div class="stat-icon">📊</div>
+                <div class="stat-value" id="stat-samples">--</div>
+                <div class="stat-label">Total Samples</div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value" id="stat-accuracy">--</div>
+                <div class="stat-label">Best Accuracy</div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon">🧠</div>
+                <div class="stat-value" id="stat-models">--</div>
+                <div class="stat-label">Models Trained</div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon">🔊</div>
+                <div class="stat-value" id="stat-features">--</div>
+                <div class="stat-label">Features</div>
+            </div>
+            <div class="stat-card glass">
+                <div class="stat-icon">🏷️</div>
+                <div class="stat-value" id="stat-classes">--</div>
+                <div class="stat-label">Emotion Classes</div>
+            </div>
+        </section>
+
+        <!-- Emotion Cards -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🎭</span>
+                Per-Emotion Recognition Accuracy
+            </h2>
+            <div class="emotion-cards" id="emotion-cards">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+
+        <!-- Model Comparison -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">⚡</span>
+                Model Performance Comparison
+            </h2>
+            <div class="model-comparison" id="model-comparison">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+
+        <!-- Charts Row -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">📈</span>
+                Training Curves
+            </h2>
+            <div class="charts-grid" id="charts-grid">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+
+        <!-- Confusion Matrix -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🔥</span>
+                Confusion Matrices
+            </h2>
+            <div class="confusion-grid" id="confusion-grid">
+                <!-- Filled by JS -->
+            </div>
+        </section>
+
+        <!-- Data Split Info -->
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                Pipeline Details
+            </h2>
+            <div class="details-grid">
+                <div class="detail-card glass">
+                    <h3>Data Split</h3>
+                    <div class="split-bars" id="split-bars">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+                <div class="detail-card glass">
+                    <h3>Classification Report</h3>
+                    <div class="report-table" id="report-table">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>🎙️ Emotion Recognition from Speech &mdash; ML Pipeline Dashboard</p>
+            <p class="footer-sub">StandardScaler fit on training data only &bull; No data leakage</p>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
